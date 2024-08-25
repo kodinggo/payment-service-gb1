@@ -12,16 +12,18 @@ import (
 
 type PaymentUsecase struct {
 	paymentRepo model.IPaymentRepository
+	// workerClient *worker.AsynqClient
 }
 
 var v = validator.New()
 
 func NewPaymentUsecase(
 	paymentRepo model.IPaymentRepository,
-
+	// workerClient *worker.AsynqClient,
 ) model.IPaymentUsecase {
 	return &PaymentUsecase{
 		paymentRepo: paymentRepo,
+		// workerClient: workerClient,
 	}
 }
 

@@ -106,7 +106,6 @@ func (p *PaymentRepository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-// For Key Redis
 func getPaymentKey(id int64) string {
 	return fmt.Sprintf("%s:%d", model.PaymentMethodKey, id)
 }
