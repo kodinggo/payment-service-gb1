@@ -50,7 +50,7 @@ type CreatePaymentInput struct {
 
 type UpdatePaymentInput struct {
 	Id        int64     `json:"id"`
-	Name      string    `json:"name"`
-	BankCode  string    `json:"bank_code"`
+	Name      string    `json:"name" validate:"required"`
+	BankCode  string    `json:"bank_code" validate:"required"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
