@@ -6,8 +6,6 @@ import (
 
 	"github.com/tubagusmf/payment-service-gb1/internal/model"
 
-	"github.com/go-playground/validator"
-	"github.com/labstack/gommon/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +14,7 @@ type paymentUsecase struct {
 	// workerClient *worker.AsynqClient
 }
 
-var v = validator.New()
+// var v = validator.New()
 var ErrNotFound = errors.New("data not found")
 
 func NewPaymentUsecase(
@@ -71,18 +69,14 @@ func (p *paymentUsecase) Create(ctx context.Context, in model.CreatePaymentInput
 		"bank_code": in.BankCode,
 	})
 
-	err := p.validateCreatePaymentInput(ctx, in)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
+	// err := p.validateCreatePaymentInput(ctx, in)
 
 	payment := model.Payment{
 		Name:     in.Name,
 		BankCode: in.BankCode,
 	}
 
-	err = p.paymentRepo.Create(ctx, payment)
+	err := p.paymentRepo.Create(ctx, payment)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -99,11 +93,7 @@ func (p *paymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput
 		"bank_code": in.BankCode,
 	})
 
-	err := p.validateUpdatePaymentInput(ctx, in)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
+	// err := p.validateUpdatePaymentInput(ctx, in)
 
 	newPayment := model.Payment{
 		Id:        in.Id,
@@ -112,7 +102,7 @@ func (p *paymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput
 		UpdatedAt: in.UpdatedAt,
 	}
 
-	err = p.paymentRepo.Update(ctx, newPayment)
+	err := p.paymentRepo.Update(ctx, newPayment)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -135,20 +125,20 @@ func (p *paymentUsecase) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (p *paymentUsecase) validateCreatePaymentInput(ctx context.Context, in model.CreatePaymentInput) error {
-	err := v.StructCtx(ctx, in)
-	if err != nil {
-		log.Error(err)
-		return model.ErrInvalidInput
-	}
-	return nil
-}
+// func (p *paymentUsecase) validateCreatePaymentInput(ctx context.Context, in model.CreatePaymentInput) error {
+// 	err := v.StructCtx(ctx, in)
+// 	if err != nil {
+// 		log.Error(err)
+// 		return model.ErrInvalidInput
+// 	}
+// 	return nil
+// }
 
-func (p *paymentUsecase) validateUpdatePaymentInput(ctx context.Context, in model.UpdatePaymentInput) error {
-	err := v.StructCtx(ctx, in)
-	if err != nil {
-		log.Error(err)
-		return model.ErrInvalidInput
-	}
-	return nil
-}
+// func (p *paymentUsecase) validateUpdatePaymentInput(ctx context.Context, in model.UpdatePaymentInput) error {
+// 	err := v.StructCtx(ctx, in)
+// 	if err != nil {
+// 		log.Error(err)
+// 		return model.ErrInvalidInput
+// 	}
+// 	return nil
+// }

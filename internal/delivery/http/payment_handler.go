@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -120,8 +121,19 @@ func (p *paymentHandler) CreatePayment(c echo.Context) error {
 	// }
 
 	var in model.CreatePaymentInput
+	payment := model.Payment{}
 
 	if err := c.Bind(&in); err != nil {
+		return c.JSON(http.StatusBadRequest, response{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	fmt.Println(payment.Name)
+
+	err := c.Validate(&payment)
+	if err != nil {
 		return c.JSON(http.StatusBadRequest, response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
