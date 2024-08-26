@@ -56,8 +56,8 @@ type PaymentFilter struct {
 }
 
 type CreatePaymentInput struct {
-	Name     string `json:"name"`
-	BankCode string `json:"bank_code"`
+	Name     string `json:"name" validate:"required"`
+	BankCode string `json:"bank_code" validate:"required"`
 }
 
 type UpdatePaymentInput struct {
