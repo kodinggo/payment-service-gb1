@@ -10,12 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type PaymentHandler struct {
+type paymentHandler struct {
 	PaymentUsecase model.IPaymentUsecase
 }
 
 func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase) {
-	handlers := &PaymentHandler{
+	handlers := &paymentHandler{
 		PaymentUsecase: us,
 	}
 
@@ -30,7 +30,7 @@ func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase) {
 	payments.DELETE("/:id", handlers.DeletePayment)
 }
 
-func (p *PaymentHandler) GetPayments(c echo.Context) error {
+func (p *paymentHandler) GetPayments(c echo.Context) error {
 	// claims := claimsSession(c)
 	// if claims == nil {
 	// 	return c.JSON(http.StatusUnauthorized, response{
@@ -76,7 +76,7 @@ func (p *PaymentHandler) GetPayments(c echo.Context) error {
 	})
 }
 
-func (p *PaymentHandler) GetPayment(c echo.Context) error {
+func (p *paymentHandler) GetPayment(c echo.Context) error {
 	// claims := claimsSession(c)
 	// if claims == nil {
 	// 	return c.JSON(http.StatusUnauthorized, response{
@@ -110,7 +110,7 @@ func (p *PaymentHandler) GetPayment(c echo.Context) error {
 	})
 }
 
-func (p *PaymentHandler) CreatePayment(c echo.Context) error {
+func (p *paymentHandler) CreatePayment(c echo.Context) error {
 	// claims := claimsSession(c)
 	// if claims == nil {
 	// 	return c.JSON(http.StatusUnauthorized, response{
@@ -141,7 +141,7 @@ func (p *PaymentHandler) CreatePayment(c echo.Context) error {
 	})
 }
 
-func (p *PaymentHandler) UpdatePayment(c echo.Context) error {
+func (p *paymentHandler) UpdatePayment(c echo.Context) error {
 	// claims := claimsSession(c)
 	// if claims == nil {
 	// 	return c.JSON(http.StatusUnauthorized, response{
@@ -185,7 +185,7 @@ func (p *PaymentHandler) UpdatePayment(c echo.Context) error {
 	})
 }
 
-func (p *PaymentHandler) DeletePayment(c echo.Context) error {
+func (p *paymentHandler) DeletePayment(c echo.Context) error {
 	// claims := claimsSession(c)
 	// if claims == nil {
 	// 	return c.JSON(http.StatusUnauthorized, response{

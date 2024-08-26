@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/tubagusmf/payment-service-gb1/internal/model"
 
@@ -10,24 +11,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type PaymentUsecase struct {
+type paymentUsecase struct {
 	paymentRepo model.IPaymentRepository
 	// workerClient *worker.AsynqClient
 }
 
 var v = validator.New()
+var ErrNotFound = errors.New("data not found")
 
 func NewPaymentUsecase(
 	paymentRepo model.IPaymentRepository,
 	// workerClient *worker.AsynqClient,
 ) model.IPaymentUsecase {
-	return &PaymentUsecase{
+	return &paymentUsecase{
 		paymentRepo: paymentRepo,
 		// workerClient: workerClient,
 	}
 }
 
-func (p *PaymentUsecase) FindAll(ctx context.Context, filter model.PaymentFilter) ([]*model.Payment, error) {
+func (p *paymentUsecase) FindAll(ctx context.Context, filter model.PaymentFilter) ([]*model.Payment, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx":    ctx,
 		"limit":  filter.Limit,
@@ -43,7 +45,7 @@ func (p *PaymentUsecase) FindAll(ctx context.Context, filter model.PaymentFilter
 	return payments, nil
 }
 
-func (p *PaymentUsecase) FindById(ctx context.Context, id int64) (*model.Payment, error) {
+func (p *paymentUsecase) FindById(ctx context.Context, id int64) (*model.Payment, error) {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx": ctx,
 		"id":  id,
@@ -55,10 +57,14 @@ func (p *PaymentUsecase) FindById(ctx context.Context, id int64) (*model.Payment
 		return nil, err
 	}
 
+	if payment == nil {
+		return nil, ErrNotFound // buat error const nya
+	}
+
 	return payment, nil
 }
 
-func (p *PaymentUsecase) Create(ctx context.Context, in model.CreatePaymentInput) error {
+func (p *paymentUsecase) Create(ctx context.Context, in model.CreatePaymentInput) error {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx":       ctx,
 		"name":      in.Name,
@@ -85,7 +91,7 @@ func (p *PaymentUsecase) Create(ctx context.Context, in model.CreatePaymentInput
 	return nil
 }
 
-func (p *PaymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput) error {
+func (p *paymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput) error {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx":       ctx,
 		"id":        in.Id,
@@ -115,7 +121,7 @@ func (p *PaymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput
 	return nil
 }
 
-func (p *PaymentUsecase) Delete(ctx context.Context, id int64) error {
+func (p *paymentUsecase) Delete(ctx context.Context, id int64) error {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx": ctx,
 		"id":  id,
@@ -129,7 +135,7 @@ func (p *PaymentUsecase) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (p *PaymentUsecase) validateCreatePaymentInput(ctx context.Context, in model.CreatePaymentInput) error {
+func (p *paymentUsecase) validateCreatePaymentInput(ctx context.Context, in model.CreatePaymentInput) error {
 	err := v.StructCtx(ctx, in)
 	if err != nil {
 		log.Error(err)
@@ -138,7 +144,7 @@ func (p *PaymentUsecase) validateCreatePaymentInput(ctx context.Context, in mode
 	return nil
 }
 
-func (p *PaymentUsecase) validateUpdatePaymentInput(ctx context.Context, in model.UpdatePaymentInput) error {
+func (p *paymentUsecase) validateUpdatePaymentInput(ctx context.Context, in model.UpdatePaymentInput) error {
 	err := v.StructCtx(ctx, in)
 	if err != nil {
 		log.Error(err)

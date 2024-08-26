@@ -11,19 +11,19 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type PaymentRepository struct {
+type paymentRepository struct {
 	db    *sql.DB
 	redis *redis.Client
 }
 
 func NewPaymentRepository(db *sql.DB, redis *redis.Client) model.IPaymentRepository {
-	return &PaymentRepository{
+	return &paymentRepository{
 		db:    db,
 		redis: redis,
 	}
 }
 
-func (p *PaymentRepository) FindAll(ctx context.Context, filter model.PaymentFilter) ([]*model.Payment, error) {
+func (p *paymentRepository) FindAll(ctx context.Context, filter model.PaymentFilter) ([]*model.Payment, error) {
 
 	res, err := p.db.QueryContext(ctx, "SELECT id, name, bank_code, created_at, updated_at, deleted_at FROM payment_methods LIMIT ? OFFSET ?", filter.Limit, filter.Offset)
 
@@ -43,7 +43,7 @@ func (p *PaymentRepository) FindAll(ctx context.Context, filter model.PaymentFil
 	return payments, nil
 }
 
-func (p *PaymentRepository) FindById(ctx context.Context, id int64) (*model.Payment, error) {
+func (p *paymentRepository) FindById(ctx context.Context, id int64) (*model.Payment, error) {
 	paymentKey := getPaymentKey(id)
 
 	var payment model.Payment
@@ -58,8 +58,8 @@ func (p *PaymentRepository) FindById(ctx context.Context, id int64) (*model.Paym
 
 	res, err := p.db.QueryContext(ctx, "SELECT id, name, bank_code, created_at, updated_at, deleted_at FROM payment_methods WHERE id=?", id)
 
-	if err != nil {
-		return nil, err
+	if err == sql.ErrNoRows {
+		return nil, nil
 	}
 
 	for res.Next() {
@@ -81,7 +81,7 @@ func (p *PaymentRepository) FindById(ctx context.Context, id int64) (*model.Paym
 	return &payment, nil
 }
 
-func (p *PaymentRepository) Create(ctx context.Context, payment model.Payment) error {
+func (p *paymentRepository) Create(ctx context.Context, payment model.Payment) error {
 	_, err := p.db.ExecContext(ctx, "INSERT INTO payment_methods (name, bank_code) VALUES (?, ?)", payment.Name, payment.BankCode)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (p *PaymentRepository) Create(ctx context.Context, payment model.Payment) e
 	return nil
 }
 
-func (p *PaymentRepository) Update(ctx context.Context, payment model.Payment) error {
+func (p *paymentRepository) Update(ctx context.Context, payment model.Payment) error {
 	_, err := p.db.ExecContext(ctx, "UPDATE payment_methods SET name=?, bank_code=? WHERE id=?", payment.Name, payment.BankCode, payment.Id)
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (p *PaymentRepository) Update(ctx context.Context, payment model.Payment) e
 	return nil
 }
 
-func (p *PaymentRepository) Delete(ctx context.Context, id int64) error {
+func (p *paymentRepository) Delete(ctx context.Context, id int64) error {
 	_, err := p.db.ExecContext(ctx, "DELETE FROM payment_methods WHERE id=?", id)
 	if err != nil {
 		return err
