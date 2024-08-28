@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  datasource: root:@tcp(localhost:3306)/db_payment_service?parseTime=true
+  dir: db/migrations
