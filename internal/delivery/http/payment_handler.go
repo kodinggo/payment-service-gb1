@@ -97,19 +97,20 @@ func (p *paymentHandler) GetPayment(c echo.Context) error {
 
 	payment, err := p.PaymentUsecase.FindById(c.Request().Context(), int64(parseId))
 
-	if err == usecase.ErrNotFound {
-		return c.JSON(http.StatusNotFound, response{
-			Status:  http.StatusNotFound,
+	if err != nil {
+
+		if err == usecase.ErrNotFound {
+			return c.JSON(http.StatusNotFound, response{
+				Status:  http.StatusNotFound,
+				Message: err.Error(),
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, response{
+			Status:  http.StatusInternalServerError,
 			Message: err.Error(),
 		})
 	}
-
-	// if err != nil {
-	// 	return c.JSON(http.StatusInternalServerError, response{
-	// 		Status:  http.StatusInternalServerError,
-	// 		Message: err.Error(),
-	// 	})
-	// }
 
 	return c.JSON(http.StatusOK, response{
 		Status:  http.StatusOK,

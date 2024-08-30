@@ -64,18 +64,6 @@ func (p *paymentRepository) FindById(ctx context.Context, id int64) (*model.Paym
 		return nil, err
 	}
 
-	// res, err := p.db.QueryContext(ctx, "SELECT id, name, bank_code, created_at, updated_at, deleted_at FROM payment_methods WHERE id=?", id)
-
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-
-	// for res.Next() {
-	// 	if err := res.Scan(&payment.Id, &payment.Name, &payment.BankCode, &payment.CreatedAt, &payment.UpdatedAt, &payment.DeletedAt); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
-
 	paymentJson, err := json.Marshal(&payment)
 	if err != nil {
 		return nil, err
