@@ -29,18 +29,6 @@ type IPaymentUsecase interface {
 	Delete(ctx context.Context, id int64) error
 }
 
-// func (p Payment) Validate() error {
-// 	if p.Name == "" {
-// 		return errors.New("name is required")
-// 	}
-
-// 	if p.BankCode == "" {
-// 		return errors.New("bank code is required")
-// 	}
-
-// 	return nil
-// }
-
 type Payment struct {
 	Id        int64        `json:"id"`
 	Name      string       `json:"name"`
