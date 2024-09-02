@@ -31,6 +31,7 @@ func JWTConfig() echojwt.Config {
 	return c
 }
 
+// UserClaims returns user claims
 func UserClaims(c echo.Context) (*JWTClaims, error) {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JWTClaims)
