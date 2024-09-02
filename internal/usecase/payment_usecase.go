@@ -11,19 +11,15 @@ import (
 
 type paymentUsecase struct {
 	paymentRepo model.IPaymentRepository
-	// workerClient *worker.AsynqClient
 }
 
-// var v = validator.New()
 var ErrNotFound = errors.New("data not found")
 
 func NewPaymentUsecase(
 	paymentRepo model.IPaymentRepository,
-	// workerClient *worker.AsynqClient,
 ) model.IPaymentUsecase {
 	return &paymentUsecase{
 		paymentRepo: paymentRepo,
-		// workerClient: workerClient,
 	}
 }
 
@@ -69,8 +65,6 @@ func (p *paymentUsecase) Create(ctx context.Context, in model.CreatePaymentInput
 		"bank_code": in.BankCode,
 	})
 
-	// err := p.validateCreatePaymentInput(ctx, in)
-
 	payment := model.Payment{
 		Name:     in.Name,
 		BankCode: in.BankCode,
@@ -92,8 +86,6 @@ func (p *paymentUsecase) Update(ctx context.Context, in model.UpdatePaymentInput
 		"name":      in.Name,
 		"bank_code": in.BankCode,
 	})
-
-	// err := p.validateUpdatePaymentInput(ctx, in)
 
 	newPayment := model.Payment{
 		Id:        in.Id,
@@ -124,21 +116,3 @@ func (p *paymentUsecase) Delete(ctx context.Context, id int64) error {
 	}
 	return nil
 }
-
-// func (p *paymentUsecase) validateCreatePaymentInput(ctx context.Context, in model.CreatePaymentInput) error {
-// 	err := v.StructCtx(ctx, in)
-// 	if err != nil {
-// 		log.Error(err)
-// 		return model.ErrInvalidInput
-// 	}
-// 	return nil
-// }
-
-// func (p *paymentUsecase) validateUpdatePaymentInput(ctx context.Context, in model.UpdatePaymentInput) error {
-// 	err := v.StructCtx(ctx, in)
-// 	if err != nil {
-// 		log.Error(err)
-// 		return model.ErrInvalidInput
-// 	}
-// 	return nil
-// }
