@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/tubagusmf/payment-service-gb1/internal/helper"
+	"github.com/kodinggo/payment-service-gb1/internal/helper"
 
 	_ "github.com/go-sql-driver/mysql"
 )

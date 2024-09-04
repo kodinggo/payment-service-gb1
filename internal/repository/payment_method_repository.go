@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/tubagusmf/payment-service-gb1/internal/model"
+	"github.com/kodinggo/payment-service-gb1/internal/model"
 
 	"github.com/redis/go-redis/v9"
 )

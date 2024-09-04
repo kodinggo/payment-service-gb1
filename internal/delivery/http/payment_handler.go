@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/tubagusmf/payment-service-gb1/internal/model"
-	"github.com/tubagusmf/payment-service-gb1/internal/usecase"
-	"github.com/tubagusmf/payment-service-gb1/internal/utils"
+	"github.com/kodinggo/payment-service-gb1/internal/model"
+	"github.com/kodinggo/payment-service-gb1/internal/usecase"
+	"github.com/kodinggo/payment-service-gb1/internal/utils"
 
 	// echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"

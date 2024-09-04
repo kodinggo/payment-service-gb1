@@ -4,15 +4,15 @@ import (
 	"sync"
 
 	"github.com/go-playground/validator"
+	db "github.com/kodinggo/payment-service-gb1/db"
+	"github.com/kodinggo/payment-service-gb1/internal/config"
+	handlerHttp "github.com/kodinggo/payment-service-gb1/internal/delivery/http"
+	"github.com/kodinggo/payment-service-gb1/internal/helper"
+	"github.com/kodinggo/payment-service-gb1/internal/repository"
+	"github.com/kodinggo/payment-service-gb1/internal/usecase"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	db "github.com/tubagusmf/payment-service-gb1/db"
-	"github.com/tubagusmf/payment-service-gb1/internal/config"
-	handlerHttp "github.com/tubagusmf/payment-service-gb1/internal/delivery/http"
-	"github.com/tubagusmf/payment-service-gb1/internal/helper"
-	"github.com/tubagusmf/payment-service-gb1/internal/repository"
-	"github.com/tubagusmf/payment-service-gb1/internal/usecase"
 )
 
 func init() {

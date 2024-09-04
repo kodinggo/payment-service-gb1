@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/tubagusmf/payment-service-gb1/internal/config"
-	"github.com/tubagusmf/payment-service-gb1/internal/helper"
+	"github.com/kodinggo/payment-service-gb1/internal/config"
+	"github.com/kodinggo/payment-service-gb1/internal/helper"
 
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/spf13/cobra"
