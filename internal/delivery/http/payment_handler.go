@@ -6,6 +6,7 @@ import (
 
 	"github.com/tubagusmf/payment-service-gb1/internal/model"
 	"github.com/tubagusmf/payment-service-gb1/internal/usecase"
+	"github.com/tubagusmf/payment-service-gb1/internal/utils"
 
 	// echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -22,8 +23,6 @@ func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase) {
 
 	payments := e.Group("/payments")
 
-	// payments.Use(echojwt.WithConfig(jwtConfig()))
-
 	payments.GET("", handlers.GetPayments)
 	payments.GET("/:id", handlers.GetPayment)
 	payments.POST("", handlers.CreatePayment)
@@ -32,20 +31,6 @@ func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase) {
 }
 
 func (p *paymentHandler) GetPayments(c echo.Context) error {
-	// claims := claimsSession(c)
-	// if claims == nil {
-	// 	return c.JSON(http.StatusUnauthorized, response{
-	// 		Status:  http.StatusForbidden,
-	// 		Message: "Forbidden",
-	// 	})
-	// }
-
-	// if claims.Role != "admin" {
-	// 	return c.JSON(http.StatusForbidden, response{
-	// 		Status:  http.StatusForbidden,
-	// 		Message: "Forbidden",
-	// 	})
-	// }
 
 	reqLimit := c.QueryParam("limit")
 	reqOffset := c.QueryParam("offset")
@@ -78,13 +63,6 @@ func (p *paymentHandler) GetPayments(c echo.Context) error {
 }
 
 func (p *paymentHandler) GetPayment(c echo.Context) error {
-	// claims := claimsSession(c)
-	// if claims == nil {
-	// 	return c.JSON(http.StatusUnauthorized, response{
-	// 		Status:  http.StatusUnauthorized,
-	// 		Message: "Unauthorized",
-	// 	})
-	// }
 
 	id := c.Param("id")
 	parseId, err := strconv.Atoi(id)
@@ -120,13 +98,6 @@ func (p *paymentHandler) GetPayment(c echo.Context) error {
 }
 
 func (p *paymentHandler) CreatePayment(c echo.Context) error {
-	// claims := claimsSession(c)
-	// if claims == nil {
-	// 	return c.JSON(http.StatusUnauthorized, response{
-	// 		Status:  http.StatusUnauthorized,
-	// 		Message: "Unauthorized",
-	// 	})
-	// }
 
 	var in model.CreatePaymentInput
 
@@ -145,6 +116,21 @@ func (p *paymentHandler) CreatePayment(c echo.Context) error {
 		})
 	}
 
+	user, err := utils.UserClaims(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, response{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	if user.Role != "admin" {
+		return c.JSON(http.StatusForbidden, response{
+			Status:  http.StatusForbidden,
+			Message: "sorry you dont have permission",
+		})
+	}
+
 	if err := p.PaymentUsecase.Create(c.Request().Context(), in); err != nil {
 		return c.JSON(http.StatusInternalServerError, response{
 			Status:  http.StatusInternalServerError,
@@ -159,13 +145,6 @@ func (p *paymentHandler) CreatePayment(c echo.Context) error {
 }
 
 func (p *paymentHandler) UpdatePayment(c echo.Context) error {
-	// claims := claimsSession(c)
-	// if claims == nil {
-	// 	return c.JSON(http.StatusUnauthorized, response{
-	// 		Status:  http.StatusUnauthorized,
-	// 		Message: "Unauthorized",
-	// 	})
-	// }
 
 	paymentId := c.Param("id")
 	parseId, err := strconv.Atoi(paymentId)
@@ -193,6 +172,21 @@ func (p *paymentHandler) UpdatePayment(c echo.Context) error {
 		})
 	}
 
+	user, err := utils.UserClaims(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, response{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	if user.Role != "admin" {
+		return c.JSON(http.StatusForbidden, response{
+			Status:  http.StatusForbidden,
+			Message: "sorry you dont have permission",
+		})
+	}
+
 	if parseId > 0 {
 		in.Id = int64(parseId)
 	}
@@ -211,18 +205,26 @@ func (p *paymentHandler) UpdatePayment(c echo.Context) error {
 }
 
 func (p *paymentHandler) DeletePayment(c echo.Context) error {
-	// claims := claimsSession(c)
-	// if claims == nil {
-	// 	return c.JSON(http.StatusUnauthorized, response{
-	// 		Status:  http.StatusUnauthorized,
-	// 		Message: "Unauthorized",
-	// 	})
-	// }
 
 	id := c.Param("id")
 	parseId, err := strconv.Atoi(id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, err := utils.UserClaims(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, response{
+			Status:  http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	if user.Role != "admin" {
+		return c.JSON(http.StatusForbidden, response{
+			Status:  http.StatusForbidden,
+			Message: "sorry you dont have permission",
+		})
 	}
 
 	if err := p.PaymentUsecase.Delete(c.Request().Context(), int64(parseId)); err != nil {
