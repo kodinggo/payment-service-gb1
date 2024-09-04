@@ -77,15 +77,17 @@ func (p *transactionRepository) FindById(ctx context.Context, id int64) (*model.
 }
 
 func (p *transactionRepository) Create(ctx context.Context, transaction model.Transaction) error {
-	_, err := p.db.ExecContext(ctx, "INSERT INTO transactions (user_id, order_id, payment_method_id, status) VALUES (?, ?, ?, ?)", transaction.UserId, transaction.OrderId, transaction.PaymentMethodId, transaction.Status)
+	result, err := p.db.ExecContext(ctx, "INSERT INTO transactions (user_id, order_id, payment_method_id, status) VALUES (?, ?, ?, ?)", transaction.UserId, transaction.OrderId, transaction.PaymentMethodId, transaction.Status)
 	if err != nil {
 		return err
 	}
-	return nil
-}
 
-func (p *transactionRepository) CreateLog(ctx context.Context, log model.TransactionLog) error {
-	_, err := p.db.ExecContext(ctx, "INSERT INTO transaction_logs (transaction_id, status) VALUES (?, ?)", log.TransactionId, log.Status)
+	id, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.ExecContext(ctx, "INSERT INTO transaction_logs (transaction_id, status) VALUES (?, ?)", id, transaction.Status)
 	if err != nil {
 		return err
 	}
