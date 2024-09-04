@@ -10,9 +10,12 @@ import (
 	"github.com/kodinggo/payment-service-gb1/internal/helper"
 	"github.com/kodinggo/payment-service-gb1/internal/repository"
 	"github.com/kodinggo/payment-service-gb1/internal/usecase"
+	authPb "github.com/kodinggo/user-service-gb1/pb/auth"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func init() {
@@ -47,14 +50,21 @@ func httpServer(cmd *cobra.Command, args []string) {
 
 	routeGroup := e.Group("/api/v1")
 
-	handlerHttp.NewPaymentHandler(routeGroup, paymentUsecase)
+	authConn, err := grpc.NewClient("localhost:4000", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	auth := authPb.NewJWTValidatorClient(authConn)
+	authMiddleware := helper.NewJWTMiddleware(auth)
+
+	handlerHttp.NewPaymentHandler(routeGroup, paymentUsecase, authMiddleware.ValidateJWT)
 
 	var wg sync.WaitGroup
 	errCh := make(chan error, 2)
 	wg.Add(2)
 
 	go func() {
-		err := e.Start(":3200")
+		err := e.Start(":3400")
 		if err != nil {
 			errCh <- err
 		}
