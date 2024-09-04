@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// Dump
 func Dump(v interface{}) string {
 	json, err := json.Marshal(v)
 	if err != nil {

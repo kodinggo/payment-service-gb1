@@ -3,7 +3,7 @@ package helper
 import (
 	"fmt"
 
-	"github.com/tubagusmf/payment-service-gb1/internal/config"
+	"github.com/kodinggo/payment-service-gb1/internal/config"
 )
 
 func GetConnectionString() string {

@@ -4,10 +4,10 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/kodinggo/payment-service-gb1/internal/config"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"github.com/tubagusmf/payment-service-gb1/internal/config"
 )
 
 var (
@@ -31,7 +31,6 @@ func JWTConfig() echojwt.Config {
 	return c
 }
 
-// UserClaims returns user claims
 func UserClaims(c echo.Context) (*JWTClaims, error) {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JWTClaims)
