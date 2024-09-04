@@ -2,14 +2,17 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sirupsen/logrus"
 	"github.com/tubagusmf/payment-service-gb1/internal/model"
 )
 
 type transactionUsecase struct {
 	transactionRepo model.ITransactionRepository
+	js              jetstream.JetStream
 }
 
 var errNotFound = errors.New("transaction not found")
@@ -82,27 +85,6 @@ func (t *transactionUsecase) Create(ctx context.Context, in model.CreateTransact
 	return nil
 }
 
-func (t *transactionUsecase) CreateLog(ctx context.Context, in model.CreateTransactionLogInput) error {
-	log := logrus.WithFields(logrus.Fields{
-		"ctx":            ctx,
-		"transaction_id": in.TransactionId,
-		"status":         in.Status,
-	})
-
-	transactionLog := model.TransactionLog{
-		TransactionId: in.TransactionId,
-		Status:        in.Status,
-	}
-
-	err := t.transactionRepo.CreateLog(ctx, transactionLog)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
-	return nil
-}
-
 func (t *transactionUsecase) Update(ctx context.Context, in model.UpdateTransactionInput) error {
 	log := logrus.WithFields(logrus.Fields{
 		"ctx":               ctx,
@@ -127,6 +109,18 @@ func (t *transactionUsecase) Update(ctx context.Context, in model.UpdateTransact
 		return err
 	}
 
+	data, err := json.Marshal(newTransaction)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	_, err = t.js.Publish(ctx, "PAYMENT.updated", data)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
 	return nil
 }
 
@@ -137,6 +131,18 @@ func (t *transactionUsecase) Delete(ctx context.Context, id int64) error {
 	})
 
 	err := t.transactionRepo.Delete(ctx, id)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	data, err := json.Marshal(id)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	_, err = t.js.Publish(ctx, "PAYMENT.deleted", data)
 	if err != nil {
 		log.Error(err)
 		return err

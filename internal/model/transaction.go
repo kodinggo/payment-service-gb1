@@ -8,7 +8,6 @@ import (
 
 type ITransactionRepository interface {
 	Create(ctx context.Context, transaction Transaction) error
-	CreateLog(ctx context.Context, log TransactionLog) error
 	FindAll(ctx context.Context, filter TransactionFilter) ([]*Transaction, error)
 	FindById(ctx context.Context, id int64) (*Transaction, error)
 	Update(ctx context.Context, transaction Transaction) error
@@ -17,7 +16,6 @@ type ITransactionRepository interface {
 
 type ITransactionUsecase interface {
 	Create(ctx context.Context, in CreateTransactionInput) error
-	CreateLog(ctx context.Context, in CreateTransactionLogInput) error
 	FindAll(ctx context.Context, filter TransactionFilter) ([]*Transaction, error)
 	FindById(ctx context.Context, id int64) (*Transaction, error)
 	Update(ctx context.Context, in UpdateTransactionInput) error
