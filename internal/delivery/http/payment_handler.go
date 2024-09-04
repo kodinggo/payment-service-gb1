@@ -7,6 +7,7 @@ import (
 	"github.com/kodinggo/payment-service-gb1/internal/model"
 	"github.com/kodinggo/payment-service-gb1/internal/usecase"
 	"github.com/kodinggo/payment-service-gb1/internal/utils"
+	"github.com/kodinggo/user-service-gb1/middleware-example/helper"
 
 	// echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -16,12 +17,14 @@ type paymentHandler struct {
 	PaymentUsecase model.IPaymentUsecase
 }
 
-func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase) {
+func NewPaymentHandler(e *echo.Group, us model.IPaymentUsecase, auth echo.MiddlewareFunc) {
 	handlers := &paymentHandler{
 		PaymentUsecase: us,
 	}
 
 	payments := e.Group("/payments")
+
+	payments.Use(auth)
 
 	payments.GET("", handlers.GetPayments)
 	payments.GET("/:id", handlers.GetPayment)
@@ -116,15 +119,15 @@ func (p *paymentHandler) CreatePayment(c echo.Context) error {
 		})
 	}
 
-	user, err := utils.UserClaims(c)
-	if err != nil {
+	user := helper.GetUserSession(c)
+	if user == nil {
 		return c.JSON(http.StatusUnauthorized, response{
 			Status:  http.StatusBadRequest,
-			Message: err.Error(),
+			Message: "Error getting user : unauthorized",
 		})
 	}
 
-	if user.Role != "admin" {
+	if user.Role.Name != "admin" {
 		return c.JSON(http.StatusForbidden, response{
 			Status:  http.StatusForbidden,
 			Message: "sorry you dont have permission",
